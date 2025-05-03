@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
+<?import io.github.palexdev.mfxcore.controls.Label?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.plimplom.addonreader.view.SettingsView">
+   <children>
+      <BorderPane fx:id="settingsBorderPane">
+         <left>
+            <MFXScrollPane BorderPane.alignment="CENTER">
+               <content>
+                  <VBox spacing="5.0" styleClass="settings-scroll-pane">
+                     <children>
+                        <MFXButton fx:id="generalButton" alignment="BASELINE_LEFT" graphicTextGap="0.0" prefHeight="35.0" prefWidth="175.0" text="General" />
+                        <MFXButton fx:id="syncButton" alignment="BASELINE_LEFT" prefHeight="35.0" prefWidth="175.0" text="Synchronization" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
+               </content>
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
+            </MFXScrollPane>
+         </left>
+         <center>
+            <Pane fx:id="settingsMainPane" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="10.0" left="25.0" right="10.0" top="10.0" />
+               </BorderPane.margin>
+            </Pane>
+         </center>
+         <top>
+            <HBox prefWidth="800.0" styleClass="settings-bar" BorderPane.alignment="CENTER">
+               <children>
+                  <Label styleClass="text" text="Settings" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <MFXButton fx:id="closeSettingsButton" styleClass="settings-close-button" text="X" />
+               </children>
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </HBox>
+         </top>
+         <padding>
+            <Insets bottom="10.0" />
+         </padding>
+      </BorderPane>
+   </children>
+</AnchorPane>

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>de.plimplom</groupId>
+    <artifactId>plimplomGamba</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>plimplomGamba</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <inno.setup.path>C:\Program Files (x86)\Inno Setup 6\ISCC.exe</inno.setup.path>
+        <junit.version>5.10.2</junit.version>
+        <javafx.version>24.0.1</javafx.version>
+        <logbackclassic.version>1.5.18</logbackclassic.version>
+        <slf4j.version>2.0.17</slf4j.version>
+        <luajava.version>4.0.2</luajava.version>
+        <lombok.version>1.18.38</lombok.version>
+        <gson.version>2.13.0</gson.version>
+        <commonsvfs.version>2.10.0</commonsvfs.version>
+        <bootstrapfx.version>0.4.0</bootstrapfx.version>
+        <mavencompiler.version>3.14.0</mavencompiler.version>
+        <execmavenplugin.version>3.5.0</execmavenplugin.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>party.iroiro.luajava</groupId>
+            <artifactId>luajava</artifactId>
+            <version>${luajava.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>party.iroiro.luajava</groupId>
+            <artifactId>lua54</artifactId>
+            <version>${luajava.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>party.iroiro.luajava</groupId>
+            <artifactId>lua54-platform</artifactId>
+            <version>${luajava.version}</version>
+            <classifier>natives-desktop</classifier>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.palexdev</groupId>
+            <artifactId>materialfx</artifactId>
+            <version>21.18.0-alpha</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.brouillard.oss</groupId>
+            <artifactId>cssfx</artifactId>
+            <version>11.4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logbackclassic.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-vfs2 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-vfs2</artifactId>
+            <version>${commonsvfs.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.bootstrapfx</groupId>
+            <artifactId>bootstrapfx-core</artifactId>
+            <version>${bootstrapfx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Compiler plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${mavencompiler.version}</version>
+                <configuration>
+                    <source>23</source>
+                    <target>23</target>
+                </configuration>
+            </plugin>
+
+            <!-- Fat JAR -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>de.plimplom.addonreader.app.PlimplomGambaClient</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>${execmavenplugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>create-runtime</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>cmd.exe</executable>
+                            <arguments>
+                                <argument>/c</argument>
+                                <argument>${java.home}\bin\jlink.exe --module-path "${java.home}\jmods;${project.basedir}\javafx_jmods" --add-modules ALL-MODULE-PATH --output "${project.build.directory}\runtime" --strip-debug --no-header-files --no-man-pages</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>compile-installer</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${inno.setup.path}</executable>
+                            <arguments>
+                                <argument>${project.basedir}\clientsetup.iss</argument>
+                                <argument>/DJarFile=${project.build.finalName}-jar-with-dependencies.jar</argument>
+                                <argument>/DSourcePath=${project.build.directory}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

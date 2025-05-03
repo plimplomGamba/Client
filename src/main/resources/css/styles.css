@@ -1,0 +1,252 @@
+.font {
+    -fx-font-family: "JetBrains Mono Regular";
+    -fx-font-size: 14px;
+}
+
+.close-button, .settings-button, .minimize-button {
+    -fx-background-color: #0B0E14FF;
+    -fx-text-fill: white;
+}
+
+.close-button .mfx-ripple-generator {
+    -mfx-ripple-color: #f65555;
+}
+
+.mfx-ripple-generator {
+    -mfx-ripple-color: #94a0b8;
+}
+
+.settings-button {
+    -fx-font-size: 32px;
+    -fx-border-radius: 50px;
+}
+
+.close-button:hover {
+    -fx-background-color: red;
+}
+
+.settings-button:hover, .minimize-button:hover {
+    -fx-background-color: #333C4DFF;
+}
+
+.title-bar {
+    -fx-background-color: #0B0E14FF;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 10, 0, 0, 0);
+}
+
+.main {
+    -fx-font-family: "JetBrains Mono Regular";
+    -fx-font-size: 14px;
+}
+
+.settings-bar {
+    -fx-border-width: 0px 0px 2px 0px;
+    -fx-border-style: solid;
+}
+
+.text {
+    -fx-font-family: "JetBrains Mono Regular";
+    -fx-text-fill: white;
+}
+
+.main-pane {
+    -fx-background-color: #333C4DFF;
+}
+
+.mfx-scroll-pane {
+    -fx-background-color: #333C4DFF;
+}
+
+.settings-scroll-pane .mfx-button {
+    -fx-background-color: #333C4DFF;
+    -fx-text-fill: white;
+}
+
+.settings-scroll-pane .mfx-button:hover {
+    -fx-background-color: #566481FF;
+}
+
+.mfx-checkbox .box {
+    -fx-background-color: #05070ACC;
+    -fx-background-radius: 2;
+    -fx-border-color: #333C4DCC;
+    -fx-background-insets: 2;
+    -fx-border-radius: 5;
+    -fx-border-width: 1;
+}
+
+.mfx-checkbox .box:hover {
+    -fx-border-color: #4DA6FFFF;
+}
+
+.mfx-checkbox:selected .box,
+.mfx-checkbox:indeterminate .box {
+    -fx-background-color: #026BD4FF;
+    -fx-border-color: #026BD4FF;
+    -fx-background-insets: 1;
+}
+
+.mfx-checkbox:selected .box:hover,
+.mfx-checkbox:indeterminate .box:hover {
+    -fx-background-color: #1c8cfd;
+}
+
+.mfx-checkbox .ripple-container .mfx-ripple-generator {
+    -mfx-ripple-radius: 0;
+}
+
+.mfx-text-field .floating-text {
+    /*-fx-font-family: "Open Sans Regular";*/
+    -fx-text-fill: #94a0b8;
+}
+
+.mfx-text-field {
+    -fx-background-color: #05070ACC;
+    -fx-background-radius: 5;
+    -fx-border-color: #333C4D99;
+    -fx-border-radius: 5;
+    -fx-padding: 5;
+    -fx-text-fill: white;
+}
+
+.mfx-text-field:floating .floating-text {
+    -fx-background-color: transparent;
+    -fx-label-padding: 0 0 5 0;
+}
+
+.mfx-text-field:focus-within .floating-text {
+    -fx-text-fill: #027AF2FF;
+}
+
+.mfx-text-field:focus-within {
+    -fx-background-insets: 2;
+    -fx-border-color: #027af2;
+    -fx-border-width: 1.5;
+    -fx-border-insets: -0.5;
+}
+
+.settings-close-button {
+    -fx-background-color: #333C4DFF;
+    -fx-text-fill: white;
+}
+
+.settings-close-button:hover {
+    -fx-background-color: #47536b;
+}
+
+.settings-close-button .mfx-ripple-generator {
+    -mfx-ripple-color: #94a0b8;
+}
+
+.title {
+    -fx-font-size: 20px;
+}
+
+.mfx-combo-box .combo-box-popup, .mfx-combo-box-cell {
+    -fx-min-height: 0;
+    -fx-pref-height: 0;
+}
+
+.mfx-context-menu, .mfx-menu-item {
+    -fx-text-fill: white;
+    -fx-font-family: "JetBrains Mono Regular";
+}
+
+.mfx-menu-item:hover {
+    -fx-background-color: #566481FF;
+}
+
+.mfx-menu-item .label {
+    -fx-text-fill: white;
+}
+
+.message-box .label {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+}
+
+.message-box .title {
+    -fx-font-size: 16px;
+    -fx-underline: true;
+}
+
+.message-box .content {
+    -fx-wrap-text: true;
+}
+
+.message-box {
+    -fx-background-radius: 10;
+    -fx-padding: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.3), 10, 0, 4, 4);
+}
+
+.message-box.error {
+    -fx-background-color: #f65555;
+}
+
+.content.text {
+    -fx-wrap-text: true;
+    -fx-wrapping-width: 800;
+}
+
+.hyperlink {
+    -fx-text-fill: #ebeef4;
+    -fx-underline: false;
+    -fx-font-weight: 500;
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+    -fx-padding: 0 0 2px 0;
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-color: #ebeef4;
+    -fx-border-style: solid;
+    -fx-opacity: 0.9;
+}
+
+.hyperlink:hover {
+    -fx-border-color: transparent;
+    -fx-text-fill: #c2c9d6;
+    -fx-opacity: 1.0;
+}
+
+.hyperlink:focused {
+    -fx-background-color: transparent;
+    -fx-effect: dropshadow(gaussian, #94A0B8FF, 5, 0.3, 0, 0);
+}
+
+.hyperlink:visited {
+    -fx-text-fill: #ebeef4;
+    -fx-border-color: transparent;
+    -fx-underline: true;
+}
+
+.message-box .mfx-button {
+    -fx-background-color: #333C4DFF;
+}
+
+.message-box .content {
+    -fx-fill: white;
+}
+
+.message-box .mfx-button {
+    -fx-text-fill: white;
+    -fx-padding: 15 10 15 10;
+}
+
+.main-content-box {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-spacing: 25;
+}
+
+.content-pane{
+    -fx-spacing: 5;
+}
+
+.content-box .mfx-checkbox{
+    -fx-text-fill: white;
+    -fx-fill: white;
+}
+
+.content-box.error{
+    -fx-spacing: 10;
+}
