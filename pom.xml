@@ -129,6 +129,13 @@
                 <configuration>
                     <source>23</source>
                     <target>23</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
 
@@ -187,6 +194,7 @@
                                 <argument>${project.basedir}\clientsetup.iss</argument>
                                 <argument>/DJarFile=${project.build.finalName}-jar-with-dependencies.jar</argument>
                                 <argument>/DSourcePath=${project.build.directory}</argument>
+                                <argument>/DAppVersion=${project.version}</argument>
                             </arguments>
                         </configuration>
                     </execution>
