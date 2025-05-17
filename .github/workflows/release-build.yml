@@ -22,35 +22,53 @@ jobs:
 
       - name: Build with Maven
         shell: powershell
-        run: C:\.mvn\apache-maven-3.9.9\bin\mvn clean install ${{ github.workspace }}
-
-      - name: Get Maven project details
-        id: maven_info
-        shell: cmd
         run: |
-          FOR /F "tokens=*" %%a IN ('C:\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.version -q -DforceStdout') DO echo "VERSION=%%a" >> %GITHUB_OUTPUT%
-          FOR /F "tokens=*" %%a IN ('C:\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.build.finalName -q -DforceStdout') DO echo "FINAL_NAME=%%a" >> %GITHUB_OUTPUT%
-          FOR /F "tokens=*" %%a IN ('C:\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.build.directory -q -DforceStdout') DO echo "BUILD_DIR=%%a" >> %GITHUB_OUTPUT%
+          cd ${{ github.workspace }}
+          C:\.mvn\apache-maven-3.9.9\bin\mvn clean install
+        
+      # Get Maven properties and set them directly as environment variables
+      - name: Set Maven properties as environment variables
+        shell: powershell
+        run: |
+          cd ${{ github.workspace }}
+          $version = & C:\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.version -q -DforceStdout
+          $finalName = & C:\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.build.finalName -q -DforceStdout
+          $buildDir = & C:\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.build.directory -q -DforceStdout
+          
+          echo "MAVEN_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "MAVEN_FINAL_NAME=$finalName" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "MAVEN_BUILD_DIR=$buildDir" | Out-File -FilePath $env:GITHUB_ENV -Append
+          
+          # For debugging
+          echo "Version: $version"
+          echo "Final Name: $finalName"
+          echo "Build Dir: $buildDir"
 
+      # Build installer using environment variables
       - name: Build Installer
         shell: powershell
         run: |
+          # For debugging
+          echo "Using: MAVEN_VERSION=${{ env.MAVEN_VERSION }}"
+          echo "Using: MAVEN_FINAL_NAME=${{ env.MAVEN_FINAL_NAME }}"
+          echo "Using: MAVEN_BUILD_DIR=${{ env.MAVEN_BUILD_DIR }}"
+          
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" `
           "${{ github.workspace }}\clientsetup.iss" `
-          "/DJarFile=${{ steps.maven_info.outputs.FINAL_NAME }}-jar-with-dependencies.jar" `
-          "/DSourcePath=${{ steps.maven_info.outputs.BUILD_DIR }}" `
-          "/DAppVersion=${{ steps.maven_info.outputs.VERSION }}"
+          "/DJarFile=${{ env.MAVEN_FINAL_NAME }}-jar-with-dependencies.jar" `
+          "/DSourcePath=${{ env.MAVEN_BUILD_DIR }}" `
+          "/DAppVersion=${{ env.MAVEN_VERSION }}"
 
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/heads/release/')
         with:
-          tag_name: v${{ steps.maven_info.outputs.VERSION }}
-          name: Release v${{ steps.maven_info.outputs.VERSION }}
+          tag_name: v${{ env.MAVEN_VERSION }}
+          name: Release v${{ env.MAVEN_VERSION }}
           draft: false
           prerelease: false
           files: |
-            ${{ steps.maven_info.outputs.BUILD_DIR }}/${{ steps.maven_info.outputs.FINAL_NAME }}-jar-with-dependencies.jar
-            ${{ steps.maven_info.outputs.BUILD_DIR }}/Output/*.exe
+            ${{ env.MAVEN_BUILD_DIR }}/${{ env.MAVEN_FINAL_NAME }}-jar-with-dependencies.jar
+            ${{ env.MAVEN_BUILD_DIR }}/Output/*.exe
           token: ${{ secrets.GITHUB_TOKEN }}
