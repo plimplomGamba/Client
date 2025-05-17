@@ -35,11 +35,11 @@ jobs:
       - name: Build Installer
         shell: powershell
         run: |
-          "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" ^
-          "${{ github.workspace }}\clientsetup.iss" ^
-          "/DJarFile=${{ steps.maven_info.outputs.FINAL_NAME }}-jar-with-dependencies.jar" ^
-          "/DSourcePath=${{ steps.maven_info.outputs.BUILD_DIR }}" ^
-          "/DAppVersion=${{ steps.maven_info.outputs.VERSION }}"
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" `
+          "${{ github.workspace }}\clientsetup.iss" `
+          "/DJarFile=${{ env.FINAL_NAME }}-jar-with-dependencies.jar" `
+          "/DSourcePath=${{ env.BUILD_DIR }}" `
+          "/DAppVersion=${{ env.VERSION }}"
 
       - name: Create GitHub Release
         id: create_release
