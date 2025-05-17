@@ -25,7 +25,6 @@ jobs:
         run: C:\.mvn\apache-maven-3.9.9\bin\mvn clean install ${{ github.workspace }}
 
       - name: Get Maven project details
-        shell: powershell
         id: maven_info
         run: |
           echo "VERSION=$(C:\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
