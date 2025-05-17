@@ -1,0 +1,53 @@
+name: Release Build
+
+on:
+  push:
+    branches: [ 'release/*', 'releases/*' ]
+  release:
+    types: [created]
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '23' # Adjust version as needed
+
+      - name: Build with Maven
+        run: mvn clean install
+
+      - name: Get Maven project details
+        id: maven_info
+        run: |
+          echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
+          echo "FINAL_NAME=$(mvn help:evaluate -Dexpression=project.build.finalName -q -DforceStdout)" >> $GITHUB_OUTPUT
+          echo "BUILD_DIR=$(mvn help:evaluate -Dexpression=project.build.directory -q -DforceStdout)" >> $GITHUB_OUTPUT
+
+      - name: Build Installer
+        run: |
+          "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" ^
+          "${{ github.workspace }}\clientsetup.iss" ^
+          "/DJarFile=${{ steps.maven_info.outputs.FINAL_NAME }}-jar-with-dependencies.jar" ^
+          "/DSourcePath=${{ steps.maven_info.outputs.BUILD_DIR }}" ^
+          "/DAppVersion=${{ steps.maven_info.outputs.VERSION }}"
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/heads/release/')
+        with:
+          tag_name: v${{ steps.maven_info.outputs.VERSION }}
+          name: Release v${{ steps.maven_info.outputs.VERSION }}
+          draft: false
+          prerelease: false
+          files: |
+            ${{ steps.maven_info.outputs.BUILD_DIR }}/${{ steps.maven_info.outputs.FINAL_NAME }}-jar-with-dependencies.jar
+            ${{ steps.maven_info.outputs.BUILD_DIR }}/Output/*.exe
+          token: ${{ secrets.GITHUB_TOKEN }}
