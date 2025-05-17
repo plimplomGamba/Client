@@ -21,9 +21,11 @@ jobs:
           java-version: '23' # Adjust version as needed
 
       - name: Build with Maven
+        shell: powershell
         run: C:\Users\simon\.mvn\apache-maven-3.9.9\bin\mvn clean install
 
       - name: Get Maven project details
+        shell: powershell
         id: maven_info
         run: |
           echo "VERSION=$(C:\Users\simon\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
@@ -31,6 +33,7 @@ jobs:
           echo "BUILD_DIR=$(C:\Users\simon\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.build.directory -q -DforceStdout)" >> $GITHUB_OUTPUT
 
       - name: Build Installer
+        shell: powershell
         run: |
           "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" ^
           "${{ github.workspace }}\clientsetup.iss" ^
