@@ -28,18 +28,18 @@ jobs:
         id: maven_info
         shell: cmd
         run: |
-          echo "VERSION=$(C:\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
-          echo "FINAL_NAME=$(C:\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.build.finalName -q -DforceStdout)" >> $GITHUB_OUTPUT
-          echo "BUILD_DIR=$(C:\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.build.directory -q -DforceStdout)" >> $GITHUB_OUTPUT
+          FOR /F "tokens=*" %%a IN ('C:\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.version -q -DforceStdout') DO echo "VERSION=%%a" >> %GITHUB_OUTPUT%
+          FOR /F "tokens=*" %%a IN ('C:\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.build.finalName -q -DforceStdout') DO echo "FINAL_NAME=%%a" >> %GITHUB_OUTPUT%
+          FOR /F "tokens=*" %%a IN ('C:\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.build.directory -q -DforceStdout') DO echo "BUILD_DIR=%%a" >> %GITHUB_OUTPUT%
 
       - name: Build Installer
         shell: powershell
         run: |
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" `
           "${{ github.workspace }}\clientsetup.iss" `
-          "/DJarFile=${{ env.FINAL_NAME }}-jar-with-dependencies.jar" `
-          "/DSourcePath=${{ env.BUILD_DIR }}" `
-          "/DAppVersion=${{ env.VERSION }}"
+          "/DJarFile=${{ steps.maven_info.outputs.FINAL_NAME }}-jar-with-dependencies.jar" `
+          "/DSourcePath=${{ steps.maven_info.outputs.BUILD_DIR }}" `
+          "/DAppVersion=${{ steps.maven_info.outputs.VERSION }}"
 
       - name: Create GitHub Release
         id: create_release
