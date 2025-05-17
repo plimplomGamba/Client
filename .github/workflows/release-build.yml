@@ -20,55 +20,111 @@ jobs:
           distribution: 'temurin'
           java-version: '23' # Adjust version as needed
 
-      - name: Build with Maven
+      # Debug: List files to verify checkout
+      - name: List files in workspace
         shell: powershell
         run: |
-          cd ${{ github.workspace }}
-          C:\.mvn\apache-maven-3.9.9\bin\mvn clean install
-        
-      # Get Maven properties and set them directly as environment variables
-      - name: Set Maven properties as environment variables
-        shell: powershell
-        run: |
-          cd ${{ github.workspace }}
-          $version = & C:\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.version -q -DforceStdout
-          $finalName = & C:\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.build.finalName -q -DforceStdout
-          $buildDir = & C:\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.build.directory -q -DforceStdout
-          
-          echo "MAVEN_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "MAVEN_FINAL_NAME=$finalName" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "MAVEN_BUILD_DIR=$buildDir" | Out-File -FilePath $env:GITHUB_ENV -Append
-          
-          # For debugging
-          echo "Version: $version"
-          echo "Final Name: $finalName"
-          echo "Build Dir: $buildDir"
+          Get-ChildItem -Path ${{ github.workspace }} -Force
 
-      # Build installer using environment variables
-      - name: Build Installer
+      # Debug: Check if pom.xml exists
+      - name: Check pom.xml
         shell: powershell
         run: |
-          # For debugging
-          echo "Using: MAVEN_VERSION=${{ env.MAVEN_VERSION }}"
-          echo "Using: MAVEN_FINAL_NAME=${{ env.MAVEN_FINAL_NAME }}"
-          echo "Using: MAVEN_BUILD_DIR=${{ env.MAVEN_BUILD_DIR }}"
-          
-          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" `
-          "${{ github.workspace }}\clientsetup.iss" `
-          "/DJarFile=${{ env.MAVEN_FINAL_NAME }}-jar-with-dependencies.jar" `
-          "/DSourcePath=${{ env.MAVEN_BUILD_DIR }}" `
-          "/DAppVersion=${{ env.MAVEN_VERSION }}"
+          if (Test-Path "${{ github.workspace }}\pom.xml") {
+            echo "pom.xml exists"
+            Get-Content -Path "${{ github.workspace }}\pom.xml" -TotalCount 10
+          } else {
+            echo "pom.xml NOT FOUND!"
+            Get-ChildItem -Path ${{ github.workspace }} -Recurse -Filter "pom.xml" | ForEach-Object { echo "Found at: $($_.FullName)" }
+          }
 
-      - name: Create GitHub Release
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/heads/release/')
-        with:
-          tag_name: v${{ env.MAVEN_VERSION }}
-          name: Release v${{ env.MAVEN_VERSION }}
-          draft: false
-          prerelease: false
-          files: |
-            ${{ env.MAVEN_BUILD_DIR }}/${{ env.MAVEN_FINAL_NAME }}-jar-with-dependencies.jar
-            ${{ env.MAVEN_BUILD_DIR }}/Output/*.exe
-          token: ${{ secrets.GITHUB_TOKEN }}
+      # Explicitly run Maven with full command and output
+      - name: Build with Maven (verbose)
+        shell: powershell
+        run: |
+          Set-Location -Path ${{ github.workspace }}
+          echo "Current directory: $(Get-Location)"
+          echo "Running Maven build..."
+
+          # Run with -X for debug output
+          & C:\.mvn\apache-maven-3.9.9\bin\mvn -X clean install
+
+          if ($LASTEXITCODE -ne 0) {
+            echo "Maven build failed with exit code $LASTEXITCODE"
+            exit $LASTEXITCODE
+          } else {
+            echo "Maven build completed successfully"
+          }
+
+      # Verify build output exists
+      - name: Verify build output
+        shell: powershell
+        run: |
+          $targetDir = "${{ github.workspace }}\target"
+          if (Test-Path $targetDir) {
+            echo "target directory exists"
+            Get-ChildItem -Path $targetDir
+          } else {
+            echo "target directory NOT FOUND!"
+          }
+
+#      - uses: actions/checkout@v3
+#
+#      - name: Set up JDK
+#        uses: actions/setup-java@v3
+#        with:
+#          distribution: 'temurin'
+#          java-version: '23' # Adjust version as needed
+#
+#      - name: Build with Maven
+#        shell: powershell
+#        run: |
+#          cd ${{ github.workspace }}
+#          C:\.mvn\apache-maven-3.9.9\bin\mvn clean install
+#
+#      # Get Maven properties and set them directly as environment variables
+#      - name: Set Maven properties as environment variables
+#        shell: powershell
+#        run: |
+#          cd ${{ github.workspace }}
+#          $version = & C:\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.version -q -DforceStdout
+#          $finalName = & C:\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.build.finalName -q -DforceStdout
+#          $buildDir = & C:\.mvn\apache-maven-3.9.9\bin\mvn help:evaluate -Dexpression=project.build.directory -q -DforceStdout
+#
+#          echo "MAVEN_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+#          echo "MAVEN_FINAL_NAME=$finalName" | Out-File -FilePath $env:GITHUB_ENV -Append
+#          echo "MAVEN_BUILD_DIR=$buildDir" | Out-File -FilePath $env:GITHUB_ENV -Append
+#
+#          # For debugging
+#          echo "Version: $version"
+#          echo "Final Name: $finalName"
+#          echo "Build Dir: $buildDir"
+#
+#      # Build installer using environment variables
+#      - name: Build Installer
+#        shell: powershell
+#        run: |
+#          # For debugging
+#          echo "Using: MAVEN_VERSION=${{ env.MAVEN_VERSION }}"
+#          echo "Using: MAVEN_FINAL_NAME=${{ env.MAVEN_FINAL_NAME }}"
+#          echo "Using: MAVEN_BUILD_DIR=${{ env.MAVEN_BUILD_DIR }}"
+#
+#          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" `
+#          "${{ github.workspace }}\clientsetup.iss" `
+#          "/DJarFile=${{ env.MAVEN_FINAL_NAME }}-jar-with-dependencies.jar" `
+#          "/DSourcePath=${{ env.MAVEN_BUILD_DIR }}" `
+#          "/DAppVersion=${{ env.MAVEN_VERSION }}"
+#
+#      - name: Create GitHub Release
+#        id: create_release
+#        uses: softprops/action-gh-release@v1
+#        if: startsWith(github.ref, 'refs/heads/release/')
+#        with:
+#          tag_name: v${{ env.MAVEN_VERSION }}
+#          name: Release v${{ env.MAVEN_VERSION }}
+#          draft: false
+#          prerelease: false
+#          files: |
+#            ${{ env.MAVEN_BUILD_DIR }}/${{ env.MAVEN_FINAL_NAME }}-jar-with-dependencies.jar
+#            ${{ env.MAVEN_BUILD_DIR }}/Output/*.exe
+#          token: ${{ secrets.GITHUB_TOKEN }}
