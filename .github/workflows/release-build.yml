@@ -22,7 +22,7 @@ jobs:
 
       - name: Build with Maven
         shell: powershell
-        run: C:\Users\simon\.mvn\apache-maven-3.9.9\bin\mvn clean install
+        run: C:\.mvn\apache-maven-3.9.9\bin\mvn clean install
 
       - name: Get Maven project details
         shell: powershell
